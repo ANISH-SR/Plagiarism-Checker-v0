@@ -38,7 +38,6 @@ instance/
 
 # File uploads
 uploads/
-*.txt
 *.pdf
 
 # IDE
