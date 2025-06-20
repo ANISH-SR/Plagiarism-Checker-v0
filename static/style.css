@@ -1,0 +1,72 @@
+body {
+  font-family: Arial, sans-serif;
+  background: #f4f4f4;
+}
+.container {
+  max-width: 600px;
+  margin: 50px auto;
+  background: #fff;
+  padding: 20px;
+  border-radius: 4px;
+}
+textarea {
+  width: 100%;
+  height: 120px;
+  margin-bottom: 10px;
+  padding: 10px;
+  box-sizing: border-box;
+}
+button {
+  padding: 10px 20px;
+  background: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+button:hover {
+  background: #0056b3;
+}
+.result {
+  margin-top: 20px;
+  font-size: 1.2em;
+}
+.input-section {
+  margin-bottom: 20px;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+.input-section h3 {
+  margin-top: 0;
+  color: #333;
+}
+input[type="file"] {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+.error {
+  background: #f8d7da;
+  color: #721c24;
+  padding: 10px;
+  border: 1px solid #f5c6cb;
+  border-radius: 4px;
+  margin-top: 20px;
+}
+.result h2 {
+  margin-top: 0;
+}
+.high-similarity {
+  color: #dc3545;
+  font-weight: bold;
+}
+.medium-similarity {
+  color: #fd7e14;
+  font-weight: bold;
+}
+.low-similarity {
+  color: #28a745;
+  font-weight: bold;
+}

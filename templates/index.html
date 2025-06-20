@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Plagiarism Checker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        border: "hsl(214.3 31.8% 91.4%)",
+                        input: "hsl(214.3 31.8% 91.4%)",
+                        ring: "hsl(222.2 84% 4.9%)",
+                        background: "hsl(0 0% 100%)",
+                        foreground: "hsl(222.2 84% 4.9%)",
+                        primary: {
+                            DEFAULT: "hsl(222.2 47.4% 11.2%)",
+                            foreground: "hsl(210 40% 98%)",
+                        },
+                        secondary: {
+                            DEFAULT: "hsl(210 40% 96%)",
+                            foreground: "hsl(222.2 84% 4.9%)",
+                        },
+                        destructive: {
+                            DEFAULT: "hsl(0 84.2% 60.2%)",
+                            foreground: "hsl(210 40% 98%)",
+                        },
+                        muted: {
+                            DEFAULT: "hsl(210 40% 96%)",
+                            foreground: "hsl(215.4 16.3% 46.9%)",
+                        },
+                        accent: {
+                            DEFAULT: "hsl(210 40% 96%)",
+                            foreground: "hsl(222.2 84% 4.9%)",
+                        },
+                    },
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background dark:bg-gray-900 min-h-screen transition-colors duration-300">
+    <div class="container mx-auto max-w-4xl p-6">
+        <div class="space-y-6">
+            <div class="text-center space-y-2 relative">
+                <!-- Dark Mode Toggle -->
+                <button 
+                    id="theme-toggle" 
+                    class="absolute top-0 right-0 p-2 rounded-md border border-border dark:border-gray-600 bg-background dark:bg-gray-800 hover:bg-secondary dark:hover:bg-gray-700 transition-colors"
+                    onclick="toggleTheme()"
+                >
+                    <svg id="sun-icon" class="w-4 h-4 text-foreground dark:text-gray-300 hidden dark:block" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"/>
+                    </svg>
+                    <svg id="moon-icon" class="w-4 h-4 text-foreground dark:text-gray-300 block dark:hidden" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/>
+                    </svg>
+                </button>
+                
+                <h1 class="text-3xl font-bold tracking-tight text-foreground dark:text-white">Plagiarism Checker</h1>
+                <p class="text-muted-foreground dark:text-gray-400">Compare texts or upload files to detect similarity</p>
+            </div>
+            
+            <div class="bg-white dark:bg-gray-800 rounded-lg border border-border dark:border-gray-600 shadow-sm p-6">
+                <form method="post" enctype="multipart/form-data" class="space-y-6">
+                    <!-- Comparison Type Selector -->
+                    <div class="space-y-4">
+                        <label class="text-sm font-medium text-foreground dark:text-white">Choose Comparison Type</label>
+                        <div class="flex space-x-4">
+                            <label class="flex items-center space-x-2 cursor-pointer">
+                                <input type="radio" name="comparison_type" value="text" class="text-primary focus:ring-primary dark:bg-gray-700 dark:border-gray-600" onchange="toggleComparisonType()" checked>
+                                <span class="text-sm font-medium dark:text-gray-300">Text Input</span>
+                            </label>
+                            <label class="flex items-center space-x-2 cursor-pointer">
+                                <input type="radio" name="comparison_type" value="file" class="text-primary focus:ring-primary dark:bg-gray-700 dark:border-gray-600" onchange="toggleComparisonType()">
+                                <span class="text-sm font-medium dark:text-gray-300">File Upload</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Text Input Section -->
+                    <div id="text-section" class="grid md:grid-cols-2 gap-6">
+                        <div class="space-y-2">
+                            <label class="text-sm font-medium text-foreground dark:text-white">First Text</label>
+                            <textarea 
+                                name="text1" 
+                                placeholder="Enter first text..."
+                                class="flex min-h-[120px] w-full rounded-md border border-input dark:border-gray-600 bg-background dark:bg-gray-700 px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground dark:placeholder:text-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 resize-none dark:text-white"
+                            ></textarea>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-sm font-medium text-foreground dark:text-white">Second Text</label>
+                            <textarea 
+                                name="text2" 
+                                placeholder="Enter second text..."
+                                class="flex min-h-[120px] w-full rounded-md border border-input dark:border-gray-600 bg-background dark:bg-gray-700 px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground dark:placeholder:text-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 resize-none dark:text-white"
+                            ></textarea>
+                        </div>
+                    </div>
+
+                    <!-- File Upload Section -->
+                    <div id="file-section" class="grid md:grid-cols-2 gap-6 hidden">
+                        <div class="space-y-2">
+                            <label class="text-sm font-medium text-foreground dark:text-white">Upload First File (.txt or .pdf)</label>
+                            <input 
+                                type="file" 
+                                name="file1" 
+                                accept=".txt,.pdf"
+                                class="flex h-10 w-full rounded-md border border-input dark:border-gray-600 bg-background dark:bg-gray-700 px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:text-white"
+                            >
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-sm font-medium text-foreground dark:text-white">Upload Second File (.txt or .pdf)</label>
+                            <input 
+                                type="file" 
+                                name="file2" 
+                                accept=".txt,.pdf"
+                                class="flex h-10 w-full rounded-md border border-input dark:border-gray-600 bg-background dark:bg-gray-700 px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:text-white"
+                            >
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-center">
+                        <button 
+                            type="submit"
+                            class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 dark:bg-blue-600 dark:hover:bg-blue-700 h-10 px-8 py-2"
+                        >
+                            Check Plagiarism
+                        </button>
+                    </div>
+                </form>
+            </div>
+            
+            {% if error %}
+            <div class="bg-destructive/15 dark:bg-red-900/20 border border-destructive/20 dark:border-red-800 text-destructive dark:text-red-400 rounded-lg p-4">
+                <div class="flex items-center space-x-2">
+                    <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                    </svg>
+                    <span class="font-medium">{{ error }}</span>
+                </div>
+            </div>
+            {% endif %}
+            
+            {% if score is not none %}
+            <div class="bg-white dark:bg-gray-800 rounded-lg border border-border dark:border-gray-600 shadow-sm p-6">
+                <div class="text-center space-y-4">
+                    <h2 class="text-2xl font-bold text-foreground dark:text-white">Similarity Score</h2>
+                    <div class="text-6xl font-bold 
+                        {% if score >= 70 %}text-destructive dark:text-red-400
+                        {% elif score >= 30 %}text-yellow-600 dark:text-yellow-400
+                        {% else %}text-green-600 dark:text-green-400
+                        {% endif %}
+                    ">
+                        {{ score }}%
+                    </div>
+                    <div class="space-y-2">
+                        {% if score >= 70 %}
+                        <div class="inline-flex items-center rounded-full border border-destructive/20 dark:border-red-800 bg-destructive/10 dark:bg-red-900/20 px-3 py-1 text-sm font-medium text-destructive dark:text-red-400">
+                            <svg class="mr-1 h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                            </svg>
+                            High Similarity Detected
+                        </div>
+                        <p class="text-sm text-muted-foreground dark:text-gray-400">This content shows high similarity and may be plagiarized.</p>
+                        {% elif score >= 30 %}
+                        <div class="inline-flex items-center rounded-full border border-yellow-200 dark:border-yellow-800 bg-yellow-50 dark:bg-yellow-900/20 px-3 py-1 text-sm font-medium text-yellow-800 dark:text-yellow-400">
+                            <svg class="mr-1 h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                            </svg>
+                            Moderate Similarity
+                        </div>
+                        <p class="text-sm text-muted-foreground dark:text-gray-400">Some similarities detected. Review for potential issues.</p>
+                        {% else %}
+                        <div class="inline-flex items-center rounded-full border border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-900/20 px-3 py-1 text-sm font-medium text-green-800 dark:text-green-400">
+                            <svg class="mr-1 h-3 w-3" fill="currentColor" viewBox="0 0 20 20"></svg>
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                            </svg>
+                            Low Similarity
+                        </div>
+                        <p class="text-sm text-muted-foreground dark:text-gray-400">Content appears to be original with minimal similarities.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        // Dark mode functionality
+        function toggleTheme() {
+            const html = document.documentElement;
+            const isDark = html.classList.contains('dark');
+            
+            if (isDark) {
+                html.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+            } else {
+                html.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        // Initialize theme on page load
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            
+            if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+                document.documentElement.classList.add('dark');
+            }
+        }
+
+        // Call initTheme when page loads
+        initTheme();
+
+        function toggleComparisonType() {
+            const textRadio = document.querySelector('input[name="comparison_type"][value="text"]');
+            const textSection = document.getElementById('text-section');
+            const fileSection = document.getElementById('file-section');
+            
+            if (textRadio.checked) {
+                textSection.classList.remove('hidden');
+                fileSection.classList.add('hidden');
+                // Clear file inputs
+                document.querySelector('input[name="file1"]').value = '';
+                document.querySelector('input[name="file2"]').value = '';
+            } else {
+                textSection.classList.add('hidden');
+                fileSection.classList.remove('hidden');
+                // Clear text inputs
+                document.querySelector('textarea[name="text1"]').value = '';
+                document.querySelector('textarea[name="text2"]').value = '';
+            }
+        }
+    </script>
+</body>
+</html>
